@@ -158,7 +158,7 @@
       pointer-events: none;
       opacity: 0;
       transform: translateY(10px) scale(0.92);
-      transition: opacity 0.25s ease, transform 0.25s ease;
+      transition: opacity 0.45s ease, transform 0.45s ease;
       z-index: 999;
       white-space: nowrap;
     }
@@ -390,11 +390,11 @@ Happy Valentine’s Day 💕
       teaseMsg.hideTimeout = setTimeout(() => {
         teaseMsg.style.opacity = "0";
         teaseMsg.style.transform = "translateY(10px) scale(0.92)";
-      }, 1200);
+      }, 2200);
     }
 
     function moveNoButton(mode = "chaos"){
-      const padding = 18;
+      const padding = 80;
       const rect = noBtn.getBoundingClientRect();
       const w = rect.width, h = rect.height;
 
@@ -410,14 +410,14 @@ Happy Valentine’s Day 💕
       // Different direction movement styles
       if (mode === "dash") {
         // Big dash: push far in a random direction (diagonal etc.)
-        const dx = (Math.random() < 0.5 ? -1 : 1) * (160 + Math.random() * 260);
-        const dy = (Math.random() < 0.5 ? -1 : 1) * (120 + Math.random() * 240);
+        const dx = (Math.random() < 0.5 ? -1 : 1) * (30 + Math.random() * 40);
+        const dy = (Math.random() < 0.5 ? -1 : 1) * (25 + Math.random() * 35);
         x = clamp(currentX + dx, padding, maxX);
         y = clamp(currentY + dy, padding, maxY);
       } else if (mode === "orbit") {
         // Circular-ish hop around current position
         const angle = Math.random() * Math.PI * 2;
-        const r = 140 + Math.random() * 220;
+        const r = 30 + Math.random() * 60;
         x = clamp(currentX + Math.cos(angle) * r, padding, maxX);
         y = clamp(currentY + Math.sin(angle) * r, padding, maxY);
       } else {
