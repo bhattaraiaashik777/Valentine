@@ -1,0 +1,476 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Be My Valentine 💘</title>
+  <style>
+    :root{
+      --bg1:#ff3b7a;
+      --bg2:#ff8bb3;
+      --card:#ffffff22;
+      --text:#fff;
+      --yes:#ff2d6f;
+      --no:#2b2b2b;
+      --shadow: 0 20px 50px rgba(0,0,0,.25);
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+      background: radial-gradient(circle at 30% 20%, #fff5, transparent 35%),
+                  radial-gradient(circle at 70% 30%, #fff4, transparent 40%),
+                  linear-gradient(135deg, var(--bg1), var(--bg2));
+    }
+
+    /* floating hearts background */
+    .hearts{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      overflow:hidden;
+      z-index:0;
+    }
+    .heart{
+      position:absolute;
+      bottom:-40px;
+      font-size:18px;
+      opacity:.85;
+      animation: floatUp linear forwards;
+      filter: drop-shadow(0 6px 8px rgba(0,0,0,.15));
+      z-index:0;
+    }
+    @keyframes floatUp{
+      to{
+        transform: translateY(-110vh) translateX(var(--drift));
+        opacity:0;
+      }
+    }
+
+    .card{
+      width:min(560px, 92vw);
+      background: var(--card);
+      border: 1px solid #ffffff33;
+      backdrop-filter: blur(10px);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      padding: 28px 22px;
+      text-align:center;
+      position:relative;
+      z-index:2;
+    }
+
+    .avatar{
+      width:92px; height:92px;
+      border-radius:50%;
+      margin: 0 auto 14px;
+      border: 4px solid #ffffff88;
+      background:
+        radial-gradient(circle at 30% 30%, #fff, #ffd1e1 40%, #ff6fa3 75%);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:42px;
+      box-shadow: 0 10px 25px rgba(0,0,0,.2);
+      user-select:none;
+    }
+
+    h1{
+      margin: 6px 0 8px;
+      font-size: clamp(24px, 3.6vw, 34px);
+      letter-spacing: .2px;
+    }
+    .msg{
+      margin: 8px auto 18px;
+      max-width: 46ch;
+      line-height:1.5;
+      opacity:.95;
+      font-size: 15.5px;
+    }
+
+    .question{
+      margin: 14px 0 18px;
+      font-size: 18px;
+      font-weight:700;
+      letter-spacing:.2px;
+    }
+
+    .actions{
+      display:flex;
+      gap:14px;
+      justify-content:center;
+      align-items:center;
+      flex-wrap:wrap;
+      padding-top: 6px;
+    }
+
+    button{
+      border:none;
+      padding: 12px 18px;
+      border-radius: 999px;
+      font-weight:700;
+      cursor:pointer;
+      transition: transform .15s ease, filter .15s ease;
+      min-width: 120px;
+      box-shadow: 0 14px 30px rgba(0,0,0,.22);
+      user-select:none;
+    }
+    button:active{ transform: scale(.98); }
+
+    #yesBtn{
+      background: linear-gradient(135deg, #ff2d6f, #ff6aa2);
+      color:#fff;
+    }
+    #yesBtn:hover{ filter: brightness(1.05); transform: translateY(-1px); }
+
+    #noBtn{
+      background: linear-gradient(135deg, #1f1f1f, #4a4a4a);
+      color:#fff;
+      /* Smooth chaotic motion */
+      transition: left 0.20s ease-out, top 0.20s ease-out, transform 0.20s ease;
+      position: relative;
+    }
+
+    .tiny{
+      opacity:.9;
+      font-size: 12.5px;
+      margin-top: 14px;
+    }
+
+    /* teasing message bubble */
+    #teaseMsg{
+      position: fixed;
+      background: rgba(255, 255, 255, 0.92);
+      color: #ff2d6f;
+      padding: 10px 16px;
+      border-radius: 20px;
+      font-weight: 800;
+      font-size: 14px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(10px) scale(0.92);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      z-index: 999;
+      white-space: nowrap;
+    }
+
+    /* Celebration modal */
+    .modal{
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background: rgba(0,0,0,.45);
+      backdrop-filter: blur(6px);
+      z-index: 50;
+      padding: 18px;
+    }
+    .modal.show{ display:flex; }
+
+    .celebrate{
+      width:min(620px, 94vw);
+      background: linear-gradient(135deg, #ff3b7a, #ff9ac2);
+      border-radius: 26px;
+      padding: 26px 20px;
+      box-shadow: 0 30px 80px rgba(0,0,0,.35);
+      text-align:center;
+      position:relative;
+      overflow:hidden;
+      border: 1px solid #ffffff55;
+      animation: pop .35s ease-out;
+    }
+    @keyframes pop{
+      from{ transform: scale(.9); opacity:0; }
+      to{ transform: scale(1); opacity:1; }
+    }
+
+    .confetti{
+      position:absolute;
+      inset:-20px;
+      pointer-events:none;
+      background:
+        radial-gradient(circle at 10% 10%, #fff8 0 2px, transparent 3px),
+        radial-gradient(circle at 20% 70%, #fff7 0 2px, transparent 3px),
+        radial-gradient(circle at 80% 30%, #fff6 0 2px, transparent 3px),
+        radial-gradient(circle at 60% 80%, #fff7 0 2px, transparent 3px);
+      opacity:.55;
+      animation: shimmer 1.6s ease-in-out infinite alternate;
+    }
+    @keyframes shimmer{
+      from{ transform: translateY(0px); }
+      to{ transform: translateY(10px); }
+    }
+
+    .big{
+      font-size: clamp(26px, 4vw, 40px);
+      margin: 0 0 6px;
+      font-weight: 900;
+      letter-spacing:.4px;
+      text-shadow: 0 10px 20px rgba(0,0,0,.18);
+    }
+    .sub{
+      margin: 6px auto 14px;
+      max-width: 50ch;
+      line-height: 1.5;
+      font-size: 15.5px;
+      opacity:.95;
+    }
+
+    .nameLine{
+      font-size: 18px;
+      margin: 10px 0 16px;
+      font-weight: 800;
+    }
+
+    .closeRow{
+      display:flex;
+      justify-content:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .ghost{
+      background: #ffffff33;
+      color:#fff;
+      border: 1px solid #ffffff55;
+      box-shadow: none;
+    }
+    .ghost:hover{ filter: brightness(1.06); }
+  </style>
+</head>
+<body>
+
+  <!-- floating hearts -->
+  <div class="hearts" id="hearts"></div>
+
+  <main class="card">
+    <div class="avatar" title="Love Mode On">💖</div>
+    <h1>Hey My Love 💞</h1>
+    <p class="msg">
+      Every smile of yours feels like home. Every moment with you feels like magic.
+      And today… I just have one important question.
+    </p>
+
+    <div class="question">Will you be my Valentine? 💘</div>
+
+    <div class="actions">
+      <button id="yesBtn">Yes 💗</button>
+      <button id="noBtn">No 🖤</button>
+    </div>
+
+    <div class="tiny">Tip: Try pressing “No” 😈</div>
+  </main>
+
+  <!-- Teasing message bubble -->
+  <div id="teaseMsg">oyee sanuu, yes thicha chitooo 💕</div>
+
+  <!-- Celebration Popup -->
+  <section class="modal" id="modal" aria-hidden="true">
+    <div class="celebrate">
+      <div class="confetti"></div>
+      <div style="font-size:34px">🎉💖🎉</div>
+      <h2 class="big">CONGRATULATIONS!</h2>
+      <p class="sub">You are officially, proudly, and forever my Valentine.</p>
+
+      <div class="nameLine">
+        💞 The Valentine of 💞 <br>
+        <span id="whoName">[Your Name]</span> ❤️
+      </div>
+
+      <p class="sub">
+        I choose you today. I’ll choose you tomorrow. And I’ll keep choosing you — always.
+        <br><b>Happy Valentine’s Day 💕</b>
+      </p>
+
+      <div class="closeRow">
+        <button class="ghost" id="closeBtn">Close</button>
+        <button id="copyBtn">Copy Message ✨</button>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // ===== Customize names here =====
+    const YOUR_NAME = "Aashik";      // change to your name
+    const THEIR_NAME = "Sanuu";      // used in copied message
+
+    document.getElementById("whoName").textContent = YOUR_NAME;
+
+    // ===== Floating hearts generator =====
+    const hearts = document.getElementById("hearts");
+    const heartEmojis = ["💗","💖","💘","💞","💕","❤️","💓"];
+
+    function spawnHeart(){
+      const h = document.createElement("div");
+      h.className = "heart";
+      h.textContent = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
+
+      const left = Math.random() * 100;
+      const size = 14 + Math.random() * 18;       // 14–32px
+      const duration = 5 + Math.random() * 5;     // 5–10s
+      const drift = (Math.random() * 120 - 60) + "px";
+
+      h.style.left = left + "vw";
+      h.style.fontSize = size + "px";
+      h.style.animationDuration = duration + "s";
+      h.style.setProperty("--drift", drift);
+
+      hearts.appendChild(h);
+      setTimeout(() => h.remove(), duration * 1000);
+    }
+
+    setInterval(spawnHeart, 350);
+    for (let i = 0; i < 10; i++) spawnHeart();
+
+    // ===== Celebration modal logic =====
+    const yesBtn = document.getElementById("yesBtn");
+    const modal = document.getElementById("modal");
+    const closeBtn = document.getElementById("closeBtn");
+    const copyBtn = document.getElementById("copyBtn");
+
+    function openModal(){
+      modal.classList.add("show");
+      modal.setAttribute("aria-hidden", "false");
+      for (let i = 0; i < 18; i++) setTimeout(spawnHeart, i * 40);
+    }
+
+    function closeModal(){
+      modal.classList.remove("show");
+      modal.setAttribute("aria-hidden", "true");
+    }
+
+    yesBtn.addEventListener("click", openModal);
+    closeBtn.addEventListener("click", closeModal);
+
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+    copyBtn.addEventListener("click", async () => {
+      const text =
+`Hey ${THEIR_NAME} 💖
+You just made me the happiest person!
+Happy Valentine’s Day 💕
+— ${YOUR_NAME}`;
+
+      try{
+        await navigator.clipboard.writeText(text);
+        copyBtn.textContent = "Copied ✅";
+        setTimeout(() => copyBtn.textContent = "Copy Message ✨", 1200);
+      }catch{
+        alert("Copy failed. You can manually copy:\n\n" + text);
+      }
+    });
+
+    // ===== NO button: hover around more + teasing message =====
+    const noBtn = document.getElementById("noBtn");
+    const teaseMsg = document.getElementById("teaseMsg");
+
+    // Track last position so it moves in different directions (not random teleport only)
+    let lastX = null, lastY = null;
+
+    function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
+
+    function showTeaseMessage(x, y){
+      teaseMsg.style.left = `${x}px`;
+      teaseMsg.style.top = `${y - 44}px`;
+      teaseMsg.style.opacity = "1";
+      teaseMsg.style.transform = "translateY(-10px) scale(1)";
+
+      clearTimeout(teaseMsg.hideTimeout);
+      teaseMsg.hideTimeout = setTimeout(() => {
+        teaseMsg.style.opacity = "0";
+        teaseMsg.style.transform = "translateY(10px) scale(0.92)";
+      }, 1200);
+    }
+
+    function moveNoButton(mode = "chaos"){
+      const padding = 18;
+      const rect = noBtn.getBoundingClientRect();
+      const w = rect.width, h = rect.height;
+
+      const maxX = window.innerWidth - w - padding;
+      const maxY = window.innerHeight - h - padding;
+
+      // Current position (if first time, use rect)
+      const currentX = lastX ?? rect.left;
+      const currentY = lastY ?? rect.top;
+
+      let x, y;
+
+      // Different direction movement styles
+      if (mode === "dash") {
+        // Big dash: push far in a random direction (diagonal etc.)
+        const dx = (Math.random() < 0.5 ? -1 : 1) * (160 + Math.random() * 260);
+        const dy = (Math.random() < 0.5 ? -1 : 1) * (120 + Math.random() * 240);
+        x = clamp(currentX + dx, padding, maxX);
+        y = clamp(currentY + dy, padding, maxY);
+      } else if (mode === "orbit") {
+        // Circular-ish hop around current position
+        const angle = Math.random() * Math.PI * 2;
+        const r = 140 + Math.random() * 220;
+        x = clamp(currentX + Math.cos(angle) * r, padding, maxX);
+        y = clamp(currentY + Math.sin(angle) * r, padding, maxY);
+      } else {
+        // Chaos teleport (still controlled)
+        x = Math.random() * maxX;
+        y = Math.random() * maxY;
+      }
+
+      const rotate = Math.random() * 22 - 11; // small wobble instead of 360
+      const scale = 0.95 + Math.random() * 0.25;
+
+      noBtn.style.position = "fixed";
+      noBtn.style.left = `${x}px`;
+      noBtn.style.top = `${y}px`;
+      noBtn.style.transform = `rotate(${rotate}deg) scale(${scale})`;
+
+      lastX = x; lastY = y;
+
+      // tease message near the button
+      showTeaseMessage(x, y);
+    }
+
+    // Extra hover motion: it "hovers around" even without click
+    let hoverInterval = null;
+
+    noBtn.addEventListener("mouseenter", () => {
+      // Start small movements while hovering
+      if (!hoverInterval){
+        hoverInterval = setInterval(() => moveNoButton("orbit"), 420);
+      }
+      moveNoButton("dash");
+    });
+
+    noBtn.addEventListener("mouseleave", () => {
+      clearInterval(hoverInterval);
+      hoverInterval = null;
+    });
+
+    // When user tries to click/press/move over it, it dodges hard
+    ["mousemove","mousedown","touchstart"].forEach(evt => {
+      noBtn.addEventListener(evt, (e) => {
+        e.preventDefault();
+        moveNoButton(Math.random() < 0.5 ? "dash" : "orbit");
+      }, { passive:false });
+    });
+
+    // Keep inside screen on resize
+    window.addEventListener("resize", () => {
+      if (getComputedStyle(noBtn).position === "fixed") {
+        moveNoButton("chaos");
+      }
+    });
+  </script>
+</body>
+</html>
+```

@@ -1,0 +1,16 @@
+#teaseMsg {
+  position: fixed;
+  background: rgba(255, 255, 255, 0.9);
+  color: #ff2d6f;
+  padding: 10px 16px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 14px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(10px) scale(0.9);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 999;
+  white-space: nowrap;
+}
